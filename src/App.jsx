@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { jsPDF } from "jspdf";
 
 const SHIFT_COLORS = {
   Dagvagt: "#fef3c7",
@@ -103,6 +104,60 @@ export default function App(){
       return {...prev,[key]:arr};
     });
   };
+  const exportPDF = () => {
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(18);
+  pdf.text(`Arbejdskalender - Uge ${ugeNr}`, 10, 15);
+
+  let y = 30;
+
+  days.forEach((day) => {
+    pdf.setFontSize(12);
+    pdf.text(`${day.day} - ${day.label}`, 10, y);
+    y += 8;
+
+    (data[day.key] || []).forEach((shift) => {
+      pdf.text(
+        `${shift.afdeling} | ${shift.type} | ${shift.start}-${shift.slut} | ${shift.note}`,
+        15,
+        y
+      );
+      y += 7;
+    });
+
+    y += 5;
+  });
+
+  pdf.save(`arbejdskalender-uge-${ugeNr}.pdf`);
+};
+const exportICS = () => {
+  let ics =
+    "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Arbejdskalender//DA//\n";
+
+  days.forEach((day) => {
+    (data[day.key] || []).forEach((shift, index) => {
+      ics +=
+`BEGIN:VEVENT
+UID:${day.key}-${index}
+SUMMARY:${shift.afdeling} ${shift.type}
+DESCRIPTION:${shift.note}
+END:VEVENT
+`;
+    });
+  });
+
+  ics += "END:VCALENDAR";
+
+  const blob = new Blob([ics], {
+    type: "text/calendar;charset=utf-8",
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "arbejdskalender.ics";
+  link.click();
+};
 
   const stats=useMemo(()=>{
     const result={timer:0,dag:0,aften:0,nat:0,S3:0,S4:0,S5:0};
@@ -122,6 +177,20 @@ export default function App(){
     <div style={{maxWidth:900,margin:"0 auto",padding:20,fontFamily:"Arial"}}>
       <h1>Arbejdskalender V4</h1>
       <h2>Uge {ugeNr}</h2>
+      <button
+  onClick={exportPDF}
+  style={{
+    marginBottom: "12px",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    cursor: "pointer"
+  }}
+>
+  📄 Eksporter PDF
+</button>
+<button onClick={exportICS}>
+  📅 Eksporter kalender
+</button>
 
       <div style={{background:"#f3f4f6",padding:12,borderRadius:8,marginBottom:12}}>
         <strong>Timer denne uge: {stats.timer.toFixed(1)}</strong><br/>
