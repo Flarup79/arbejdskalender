@@ -73,6 +73,9 @@ function getMonthDays(date) {
 export default function App(){
   const [weekOffset,setWeekOffset]=useState(0);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [darkMode, setDarkMode] = useState(() => {
+  return localStorage.getItem("darkmode") === "true";
+});
   const [data,setData]=useState(()=>{
     try{
       return JSON.parse(localStorage.getItem("arbejdskalender-v4"))||{};
@@ -84,6 +87,9 @@ export default function App(){
   useEffect(()=>{
     localStorage.setItem("arbejdskalender-v4",JSON.stringify(data));
   },[data]);
+  useEffect(() => {
+  localStorage.setItem("darkmode", darkMode);
+}, [darkMode]);
 
   const days=weekDays(weekOffset);
   const ugeNr=weekNumber(getMonday(weekOffset));
@@ -271,8 +277,28 @@ END:VEVENT
 }, [data, monthDays]);
 
   return (
-    <div style={{maxWidth:900,margin:"0 auto",padding:20,fontFamily:"Arial"}}>
+    <div
+  style={{
+    maxWidth:900,
+    margin:"0 auto",
+    padding:20,
+    fontFamily:"Arial",
+    background: darkMode ? "#111827" : "#ffffff",
+    color: darkMode ? "#f9fafb" : "#111827",
+    minHeight:"100vh"
+  }}
+>
       <h1>Arbejdskalender V4</h1>
+      <button
+  onClick={() => setDarkMode(!darkMode)}
+  style={{
+    marginBottom: 12,
+    padding: "8px 12px",
+    borderRadius: 8,
+  }}
+>
+  {darkMode ? "☀️ Lys tilstand" : "🌙 Mørk tilstand"}
+</button>
       <div style={{ marginBottom: 10 }}>
   <button
     onClick={() =>
