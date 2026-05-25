@@ -193,7 +193,43 @@ END:VEVENT
   return (
     <div style={{maxWidth:900,margin:"0 auto",padding:20,fontFamily:"Arial"}}>
       <h1>Arbejdskalender V4</h1>
-      <h2>Månedsoverblik</h2>
+      <div style={{ marginBottom: 10 }}>
+  <button
+    onClick={() =>
+      setCurrentMonth(
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() - 1,
+          1
+        )
+      )
+    }
+  >
+    ◀ Forrige måned
+  </button>
+
+  <button
+    onClick={() =>
+      setCurrentMonth(
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() + 1,
+          1
+        )
+      )
+    }
+    style={{ marginLeft: 8 }}
+  >
+    Næste måned ▶
+  </button>
+</div>
+      
+      <h2>
+  {currentMonth.toLocaleDateString("da-DK", {
+    month: "long",
+    year: "numeric",
+  })}
+</h2>
 
 <div
   style={{
@@ -208,14 +244,34 @@ END:VEVENT
     const hasShift = data[key]?.length > 0;
 
     return (
-      <div
-        key={key}
-        style={{
-          padding: 8,
+    <div
+  key={key}
+  onClick={() => {
+    const todayMonday = getMonday(0);
+
+    const clickedMonday = new Date(day);
+
+    const weekday = clickedMonday.getDay();
+
+    clickedMonday.setDate(
+      clickedMonday.getDate() -
+      (weekday === 0 ? 6 : weekday - 1)
+    );
+
+    const diffWeeks = Math.round(
+      (clickedMonday - todayMonday) /
+      (1000 * 60 * 60 * 24 * 7)
+    );
+
+    setWeekOffset(diffWeeks);
+  }}
+  style={{
+    padding: 8,
           borderRadius: 6,
           textAlign: "center",
           background: hasShift ? "#86efac" : "#f3f4f6",
           border: "1px solid #ddd",
+          cursor: "pointer",
         }}
       >
         {day.getDate()}
