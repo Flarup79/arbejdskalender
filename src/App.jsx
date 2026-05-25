@@ -15,6 +15,12 @@ const DEFAULT_TIMES = {
   Aftenvagt: ["15:00","23:00"],
   Nattevagt: ["23:00","07:00"],
 };
+const PAY_RATES = {
+  base: 239.19,
+  evening: 35.94,
+  saturday: 40.17,
+  sunday: 119.14,
+};
 
 function getMonday(offset=0){
   const d=new Date();
@@ -275,6 +281,53 @@ END:VEVENT
 
   return result;
 }, [data, monthDays]);
+const salaryStats = useMemo(() => {
+  let hours = 0;
+  let basePay = 0;
+  let eveningPay = 0;
+  let saturdayPay = 0;
+  let sundayPay = 0;
+
+  monthDays.forEach((date) => {
+    const key = date.toISOString().slice(0, 10);
+    const weekday = date.getDay();
+
+    (data[key] || []).forEach((shift) => {
+      const h = hoursBetween(shift.start, shift.slut);
+
+      hours += h;
+      basePay += h * PAY_RATES.base;
+
+      if (
+        shift.type === "Aftenvagt" ||
+        shift.type === "Nattevagt"
+      ) {
+        eveningPay += h * PAY_RATES.evening;
+      }
+
+      if (weekday === 6) {
+        saturdayPay += h * PAY_RATES.saturday;
+      }
+
+      if (weekday === 0) {
+        sundayPay += h * PAY_RATES.sunday;
+      }
+    });
+  });
+
+  return {
+    hours,
+    basePay,
+    eveningPay,
+    saturdayPay,
+    sundayPay,
+    total:
+      basePay +
+      eveningPay +
+      saturdayPay +
+      sundayPay,
+  };
+}, [data, monthDays]);
 
   return (
     <div
@@ -412,6 +465,55 @@ END:VEVENT
   S4: {monthStats.S4}
   {" | "}
   S5: {monthStats.S5}
+</div>
+<div
+  style={{
+    background: "#dcfce7",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  }}
+>
+  <h3>💰 Forventet månedsløn</h3>
+
+  Timer: {salaryStats.hours.toFixed(1)}
+
+  <br />
+
+  Grundløn:
+  {" "}
+  {salaryStats.basePay.toFixed(0)}
+  kr
+
+  <br />
+
+  Aften/nattillæg:
+  {" "}
+  {salaryStats.eveningPay.toFixed(0)}
+  kr
+
+  <br />
+
+  Lørdagstillæg:
+  {" "}
+  {salaryStats.saturdayPay.toFixed(0)}
+  kr
+
+  <br />
+
+  Søndag/SH:
+  {" "}
+  {salaryStats.sundayPay.toFixed(0)}
+  kr
+
+  <hr />
+
+  <strong>
+    Samlet:
+    {" "}
+    {salaryStats.total.toFixed(0)}
+    kr
+  </strong>
 </div>
       <h2>Uge {ugeNr}</h2>
       <button
