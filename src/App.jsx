@@ -54,9 +54,25 @@ function hoursBetween(start,end){
   if(e<s) e+=24;
   return e-s;
 }
+function getMonthDays(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  const days = [];
+
+  for (let i = 1; i <= lastDay.getDate(); i++) {
+    days.push(new Date(year, month, i));
+  }
+
+  return days;
+}
 
 export default function App(){
   const [weekOffset,setWeekOffset]=useState(0);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [data,setData]=useState(()=>{
     try{
       return JSON.parse(localStorage.getItem("arbejdskalender-v4"))||{};
@@ -71,6 +87,7 @@ export default function App(){
 
   const days=weekDays(weekOffset);
   const ugeNr=weekNumber(getMonday(weekOffset));
+  const monthDays = getMonthDays(currentMonth);
 
   const addShift=(key)=>{
     setData(prev=>({
@@ -176,6 +193,36 @@ END:VEVENT
   return (
     <div style={{maxWidth:900,margin:"0 auto",padding:20,fontFamily:"Arial"}}>
       <h1>Arbejdskalender V4</h1>
+      <h2>Månedsoverblik</h2>
+
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(7, 1fr)",
+    gap: 6,
+    marginBottom: 20,
+  }}
+>
+  {monthDays.map((day) => {
+    const key = day.toISOString().slice(0,10);
+    const hasShift = data[key]?.length > 0;
+
+    return (
+      <div
+        key={key}
+        style={{
+          padding: 8,
+          borderRadius: 6,
+          textAlign: "center",
+          background: hasShift ? "#86efac" : "#f3f4f6",
+          border: "1px solid #ddd",
+        }}
+      >
+        {day.getDate()}
+      </div>
+    );
+  })}
+</div>
       <h2>Uge {ugeNr}</h2>
       <button
   onClick={exportPDF}
