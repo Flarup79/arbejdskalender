@@ -101,6 +101,21 @@ export default function App(){
       }]
     }));
   };
+  const addQuickShift = (key, afdeling, type, start, slut) => {
+  setData(prev => ({
+    ...prev,
+    [key]: [
+      ...(prev[key] || []),
+      {
+        afdeling,
+        type,
+        start,
+        slut,
+        note: ""
+      }
+    ]
+  }));
+};
 
   const updateShift=(key,i,field,value)=>{
     setData(prev=>{
@@ -326,7 +341,62 @@ END:VEVENT
             </div>
           ))}
 
-          <button onClick={()=>addShift(day.key)}>+ Tilføj vagt</button>
+          <div style={{ marginTop: 8 }}>
+
+  <button onClick={() => addShift(day.key)}>
+    + Tilføj vagt
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S3","Dagvagt","07:00","15:00")}
+    style={{ marginLeft: 6, background:"#dcfce7" }}
+  >
+    S3 Dag
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S3","Aftenvagt","15:00","23:00")}
+    style={{ marginLeft: 6, background:"#fed7aa" }}
+  >
+    S3 Aften
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S4","Dagvagt","07:00","15:00")}
+    style={{ marginLeft: 6, background:"#dcfce7" }}
+  >
+    S4 Dag
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S4","Aftenvagt","15:00","23:00")}
+    style={{ marginLeft: 6, background:"#fed7aa" }}
+  >
+    S4 Aften
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S5","Dagvagt","07:00","15:00")}
+    style={{ marginLeft: 6, background:"#dcfce7" }}
+  >
+    S5 Dag
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S5","Aftenvagt","15:00","23:00")}
+    style={{ marginLeft: 6, background:"#fed7aa" }}
+  >
+    S5 Aften
+  </button>
+
+  <button
+    onClick={() => addQuickShift(day.key,"S5","Nattevagt","23:00","07:00")}
+    style={{ marginLeft: 6, background:"#bfdbfe" }}
+  >
+    S5 Nat
+  </button>
+
+</div>
         </div>
       ))}
     </div>
