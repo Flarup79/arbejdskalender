@@ -119,13 +119,14 @@ export default function App(){
     ...prev,
     [key]: [
       ...(prev[key] || []),
-      {
-        afdeling,
-        type,
-        start,
-        slut,
-        note: ""
-      }
+   {
+  afdeling:"S3",
+  type:"Dagvagt",
+  start:"07:00",
+  slut:"15:00",
+  note:"",
+  overtime:false
+}
     ]
   }));
 };
