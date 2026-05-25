@@ -102,6 +102,7 @@ export default function App(){
     }));
   };
   const addQuickShift = (key, afdeling, type, start, slut) => {
+    
   setData(prev => ({
     ...prev,
     [key]: [
@@ -112,6 +113,41 @@ export default function App(){
         start,
         slut,
         note: ""
+      }
+    ]
+  }));
+};
+const addFavoriteShift = (key, favorite) => {
+  const favorites = {
+    dag: {
+      afdeling: "S3",
+      type: "Dagvagt",
+      start: "07:00",
+      slut: "15:00",
+    },
+    aften: {
+      afdeling: "S3",
+      type: "Aftenvagt",
+      start: "15:00",
+      slut: "23:00",
+    },
+    weekend: {
+      afdeling: "S4",
+      type: "Dagvagt",
+      start: "08:00",
+      slut: "16:00",
+    },
+  };
+
+  const shift = favorites[favorite];
+
+  setData(prev => ({
+    ...prev,
+    [key]: [
+      ...(prev[key] || []),
+      {
+        ...shift,
+        note: "",
       }
     ]
   }));
@@ -204,6 +240,35 @@ END:VEVENT
     });
     return result;
   },[data,days]);
+  const monthStats = useMemo(() => {
+  const result = {
+    timer: 0,
+    dag: 0,
+    aften: 0,
+    nat: 0,
+    S3: 0,
+    S4: 0,
+    S5: 0,
+  };
+
+  monthDays.forEach((date) => {
+    const key = date.toISOString().slice(0, 10);
+
+    (data[key] || []).forEach((s) => {
+      result.timer += hoursBetween(s.start, s.slut);
+
+      if (s.type === "Dagvagt") result.dag++;
+      if (s.type === "Aftenvagt") result.aften++;
+      if (s.type === "Nattevagt") result.nat++;
+
+      if (result[s.afdeling] !== undefined) {
+        result[s.afdeling]++;
+      }
+    });
+  });
+
+  return result;
+}, [data, monthDays]);
 
   return (
     <div style={{maxWidth:900,margin:"0 auto",padding:20,fontFamily:"Arial"}}>
@@ -293,6 +358,34 @@ END:VEVENT
       </div>
     );
   })}
+</div>
+<div
+  style={{
+    background: "#e0f2fe",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+  }}
+>
+  <strong>
+    Timer denne måned: {monthStats.timer.toFixed(1)}
+  </strong>
+
+  <br />
+
+  Dagvagter: {monthStats.dag}
+  {" | "}
+  Aftenvagter: {monthStats.aften}
+  {" | "}
+  Nattevagter: {monthStats.nat}
+
+  <br />
+
+  S3: {monthStats.S3}
+  {" | "}
+  S4: {monthStats.S4}
+  {" | "}
+  S5: {monthStats.S5}
 </div>
       <h2>Uge {ugeNr}</h2>
       <button
@@ -395,6 +488,26 @@ END:VEVENT
   >
     S5 Nat
   </button>
+  <button
+  onClick={() => addFavoriteShift(day.key, "dag")}
+  style={{ marginLeft: 6, background:"#fde68a" }}
+>
+  ⭐ Min Dagvagt
+</button>
+
+<button
+  onClick={() => addFavoriteShift(day.key, "aften")}
+  style={{ marginLeft: 6, background:"#fde68a" }}
+>
+  ⭐ Min Aftenvagt
+</button>
+
+<button
+  onClick={() => addFavoriteShift(day.key, "weekend")}
+  style={{ marginLeft: 6, background:"#fde68a" }}
+>
+  ⭐ Weekendvagt
+</button>
 
 </div>
         </div>
