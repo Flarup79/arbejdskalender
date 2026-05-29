@@ -25,7 +25,7 @@ const TAX_RATES = {
   am: 0.08,
   tax: 0.44,
 };
-
+const NORM_HOURS_MONTH = 160.33;
 
 function getMonday(offset=0){
   const d=new Date();
@@ -301,9 +301,12 @@ const amBidrag = total * TAX_RATES.am;
 const taxableIncome = total - amBidrag;
 const estimatedTax = taxableIncome * TAX_RATES.tax;
 const netPay = total - amBidrag - estimatedTax;
+const timeBalance =
+  hours - NORM_HOURS_MONTH;
 
 return {
   hours,
+  timeBalance,
   basePay,
   eveningPay,
   saturdayPay,
@@ -472,6 +475,18 @@ return {
 <hr />
 
   Timer: {salaryStats.hours.toFixed(1)}
+  <br />
+
+Normtimer:
+{" "}
+{NORM_HOURS_MONTH.toFixed(2)}
+
+<br />
+
+Timerbank:
+{" "}
+{salaryStats.timeBalance > 0 ? "+" : ""}
+{salaryStats.timeBalance.toFixed(2)}
 
   <br />
 
