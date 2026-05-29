@@ -113,20 +113,19 @@ export default function App(){
       }]
     }));
   };
-  const addQuickShift = (key, afdeling, type, start, slut) => {
-    
+   const addQuickShift = (key, afdeling, type, start, slut) => {
   setData(prev => ({
     ...prev,
     [key]: [
       ...(prev[key] || []),
-   {
-  afdeling:"S3",
-  type:"Dagvagt",
-  start:"07:00",
-  slut:"15:00",
-  note:"",
-  overtime:false
-}
+      {
+        afdeling,
+        type,
+        start,
+        slut,
+        note: "",
+        overtime: false
+      }
     ]
   }));
 };
@@ -559,6 +558,21 @@ const salaryStats = useMemo(() => {
               <input type="time" value={s.start} onChange={e=>updateShift(day.key,i,"start",e.target.value)} />
               <input type="time" value={s.slut} onChange={e=>updateShift(day.key,i,"slut",e.target.value)} />
               <input value={s.note} placeholder="Note" onChange={e=>updateShift(day.key,i,"note",e.target.value)} />
+              <label style={{ marginLeft: 8 }}>
+  <input
+    type="checkbox"
+    checked={s.overtime || false}
+    onChange={e =>
+      updateShift(
+        day.key,
+        i,
+        "overtime",
+        e.target.checked
+      )
+    }
+  />
+  Overarbejde 50%
+</label>
               <button onClick={()=>deleteShift(day.key,i)}>Slet</button>
             </div>
           ))}
@@ -582,7 +596,12 @@ const salaryStats = useMemo(() => {
   >
     S3 Aften
   </button>
-
+<button
+  onClick={() => addQuickShift(day.key,"S3","Nattevagt","23:00","07:00")}
+  style={{ marginLeft: 6, background:"#bfdbfe" }}
+>
+  S3 Nat
+</button>
   <button
     onClick={() => addQuickShift(day.key,"S4","Dagvagt","07:00","15:00")}
     style={{ marginLeft: 6, background:"#dcfce7" }}
@@ -596,7 +615,12 @@ const salaryStats = useMemo(() => {
   >
     S4 Aften
   </button>
-
+<button
+  onClick={() => addQuickShift(day.key,"S4","Nattevagt","23:00","07:00")}
+  style={{ marginLeft: 6, background:"#bfdbfe" }}
+>
+  S4 Nat
+</button>
   <button
     onClick={() => addQuickShift(day.key,"S5","Dagvagt","07:00","15:00")}
     style={{ marginLeft: 6, background:"#dcfce7" }}
