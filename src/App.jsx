@@ -134,41 +134,7 @@ export default function App(){
     ]
   }));
 };
-const addFavoriteShift = (key, favorite) => {
-  const favorites = {
-    dag: {
-      afdeling: "S3",
-      type: "Dagvagt",
-      start: "07:00",
-      slut: "15:00",
-    },
-    aften: {
-      afdeling: "S3",
-      type: "Aftenvagt",
-      start: "15:00",
-      slut: "23:00",
-    },
-    weekend: {
-      afdeling: "S4",
-      type: "Dagvagt",
-      start: "08:00",
-      slut: "16:00",
-    },
-  };
 
-  const shift = favorites[favorite];
-
-  setData(prev => ({
-    ...prev,
-    [key]: [
-      ...(prev[key] || []),
-      {
-        ...shift,
-        note: "",
-      }
-    ]
-  }));
-};
 
   const updateShift=(key,i,field,value)=>{
     setData(prev=>{
@@ -362,8 +328,7 @@ return {
     minHeight:"100vh"
   }}
 >
-      <h1>Arbejdskalender V4</h1>
-      <button
+<h1>Arbejdskalender</h1>      <button
   onClick={() => setDarkMode(!darkMode)}
   style={{
     marginBottom: 12,
@@ -588,7 +553,16 @@ kr
       <button onClick={()=>setWeekOffset(w=>w+1)} style={{marginLeft:8}}>Næste uge ▶</button>
 
       {days.map(day=>(
-        <div key={day.key} style={{border:"1px solid #ccc",borderRadius:8,padding:12,marginTop:12}}>
+        <div
+  key={day.key}
+  style={{
+    border:"1px solid #ccc",
+    borderRadius:8,
+    padding:12,
+    marginTop:12,
+    overflowX:"auto",
+  }}
+>
           <h3>{day.day} - {day.label}</h3>
 
           {(data[day.key]||[]).map((s,i)=>(
@@ -604,7 +578,15 @@ kr
 
               <input type="time" value={s.start} onChange={e=>updateShift(day.key,i,"start",e.target.value)} />
               <input type="time" value={s.slut} onChange={e=>updateShift(day.key,i,"slut",e.target.value)} />
-              <input value={s.note} placeholder="Note" onChange={e=>updateShift(day.key,i,"note",e.target.value)} />
+              <input
+  value={s.note}
+  placeholder="Note"
+  onChange={e=>updateShift(day.key,i,"note",e.target.value)}
+  style={{
+    minWidth: 120,
+    marginLeft: 4,
+  }}
+/>
               <label style={{ marginLeft: 8 }}>
   <input
     type="checkbox"
@@ -624,90 +606,84 @@ kr
             </div>
           ))}
 
-          <div style={{ marginTop: 8 }}>
+<div
+  style={{
+    marginTop: 8,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 6,
+  }}
+>
 
-  <button onClick={() => addShift(day.key)}>
-    + Tilføj vagt
-  </button>
+<button
+  onClick={() => addShift(day.key)}
+  style={{
+    padding: "10px 14px",
+    fontSize: "16px",
+  }}
+>
+  + Tilføj vagt
+</button>
 
   <button
     onClick={() => addQuickShift(day.key,"S3","Dagvagt","07:00","15:00")}
-    style={{ marginLeft: 6, background:"#dcfce7" }}
+style={{ marginLeft: 6, background:"#dcfce7", padding:"8px 12px" }}
   >
     S3 Dag
   </button>
 
   <button
     onClick={() => addQuickShift(day.key,"S3","Aftenvagt","15:00","23:00")}
-    style={{ marginLeft: 6, background:"#fed7aa" }}
+style={{ marginLeft: 6, background:"#fed7aa", padding:"8px 12px" }}
   >
     S3 Aften
   </button>
 <button
   onClick={() => addQuickShift(day.key,"S3","Nattevagt","23:00","07:00")}
-  style={{ marginLeft: 6, background:"#bfdbfe" }}
+style={{ marginLeft: 6, background:"#bfdbfe", padding:"8px 12px" }}
 >
   S3 Nat
 </button>
   <button
     onClick={() => addQuickShift(day.key,"S4","Dagvagt","07:00","15:00")}
-    style={{ marginLeft: 6, background:"#dcfce7" }}
+style={{ marginLeft: 6, background:"#dcfce7", padding:"8px 12px" }}
   >
     S4 Dag
   </button>
 
   <button
     onClick={() => addQuickShift(day.key,"S4","Aftenvagt","15:00","23:00")}
-    style={{ marginLeft: 6, background:"#fed7aa" }}
+style={{ marginLeft: 6, background:"#fed7aa", padding:"8px 12px" }}
   >
     S4 Aften
   </button>
 <button
   onClick={() => addQuickShift(day.key,"S4","Nattevagt","23:00","07:00")}
-  style={{ marginLeft: 6, background:"#bfdbfe" }}
+style={{ marginLeft: 6, background:"#bfdbfe", padding:"8px 12px" }}
 >
   S4 Nat
 </button>
   <button
     onClick={() => addQuickShift(day.key,"S5","Dagvagt","07:00","15:00")}
-    style={{ marginLeft: 6, background:"#dcfce7" }}
+style={{ marginLeft: 6, background:"#dcfce7", padding:"8px 12px" }}
   >
     S5 Dag
   </button>
 
   <button
     onClick={() => addQuickShift(day.key,"S5","Aftenvagt","15:00","23:00")}
-    style={{ marginLeft: 6, background:"#fed7aa" }}
+style={{ marginLeft: 6, background:"#fed7aa", padding:"8px 12px" }}
   >
     S5 Aften
   </button>
 
   <button
     onClick={() => addQuickShift(day.key,"S5","Nattevagt","23:00","07:00")}
-    style={{ marginLeft: 6, background:"#bfdbfe" }}
+   style={{ marginLeft: 6, background:"#bfdbfe", padding:"8px 12px" }}
   >
     S5 Nat
   </button>
-  <button
-  onClick={() => addFavoriteShift(day.key, "dag")}
-  style={{ marginLeft: 6, background:"#fde68a" }}
->
-  ⭐ Min Dagvagt
-</button>
-
-<button
-  onClick={() => addFavoriteShift(day.key, "aften")}
-  style={{ marginLeft: 6, background:"#fde68a" }}
->
-  ⭐ Min Aftenvagt
-</button>
-
-<button
-  onClick={() => addFavoriteShift(day.key, "weekend")}
-  style={{ marginLeft: 6, background:"#fde68a" }}
->
-  ⭐ Weekendvagt
-</button>
+  
 
 </div>
         </div>
