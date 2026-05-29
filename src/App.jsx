@@ -21,6 +21,11 @@ const PAY_RATES = {
   saturday: 40.17,
   sunday: 119.14,
 };
+const TAX_RATES = {
+  am: 0.08,
+  tax: 0.44,
+};
+
 
 function getMonday(offset=0){
   const d=new Date();
@@ -319,21 +324,30 @@ const salaryStats = useMemo(() => {
     });
   });
 
-  return {
-    hours,
-    basePay,
-    eveningPay,
-    saturdayPay,
-    sundayPay,
-    overtimePay,
-    total:
-      basePay +
-      eveningPay +
-      saturdayPay +
-      sundayPay +
-      overtimePay,
+const total =
+  basePay +
+  eveningPay +
+  saturdayPay +
+  sundayPay +
+  overtimePay;
 
-  };
+const amBidrag = total * TAX_RATES.am;
+const taxableIncome = total - amBidrag;
+const estimatedTax = taxableIncome * TAX_RATES.tax;
+const netPay = total - amBidrag - estimatedTax;
+
+return {
+  hours,
+  basePay,
+  eveningPay,
+  saturdayPay,
+  sundayPay,
+  overtimePay,
+  total,
+  amBidrag,
+  estimatedTax,
+  netPay,
+};
 }, [data, monthDays]);
 
   return (
@@ -519,6 +533,26 @@ const salaryStats = useMemo(() => {
 Overarbejde 50%:
 {" "}
 {salaryStats.overtimePay.toFixed(0)}
+kr
+<br />
+
+AM-bidrag 8%:
+{" "}
+{salaryStats.amBidrag.toFixed(0)}
+kr
+
+<br />
+
+Skat 44%:
+{" "}
+{salaryStats.estimatedTax.toFixed(0)}
+kr
+
+<br />
+
+Forventet udbetalt:
+{" "}
+{salaryStats.netPay.toFixed(0)}
 kr
 
   <strong>
