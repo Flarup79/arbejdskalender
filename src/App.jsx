@@ -287,6 +287,7 @@ const salaryStats = useMemo(() => {
   let eveningPay = 0;
   let saturdayPay = 0;
   let sundayPay = 0;
+  let overtimePay = 0;
 
   monthDays.forEach((date) => {
     const key = date.toISOString().slice(0, 10);
@@ -297,6 +298,9 @@ const salaryStats = useMemo(() => {
 
       hours += h;
       basePay += h * PAY_RATES.base;
+      if (shift.overtime) {
+  overtimePay += h * PAY_RATES.base * 0.5;
+}
 
       if (
         shift.type === "Aftenvagt" ||
@@ -321,11 +325,14 @@ const salaryStats = useMemo(() => {
     eveningPay,
     saturdayPay,
     sundayPay,
+    overtimePay,
     total:
       basePay +
       eveningPay +
       saturdayPay +
-      sundayPay,
+      sundayPay +
+      overtimePay,
+
   };
 }, [data, monthDays]);
 
@@ -507,6 +514,12 @@ const salaryStats = useMemo(() => {
   kr
 
   <hr />
+  <br />
+
+Overarbejde 50%:
+{" "}
+{salaryStats.overtimePay.toFixed(0)}
+kr
 
   <strong>
     Samlet:
