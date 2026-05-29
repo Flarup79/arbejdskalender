@@ -460,16 +460,37 @@ return {
     marginBottom: 16,
   }}
 >
-  <h3>💰 Forventet månedsløn</h3>
+ <h3>💰 Lønberegning</h3>
+
+<strong>
+  Bruttoløn:
+  {" "}
+  {salaryStats.total.toFixed(0)}
+  kr
+</strong>
+
+<hr />
 
   Timer: {salaryStats.hours.toFixed(1)}
 
   <br />
 
-  Grundløn:
-  {" "}
-  {salaryStats.basePay.toFixed(0)}
-  kr
+Grundløn:
+{" "}
+{salaryStats.basePay.toFixed(0)}
+kr
+
+<br />
+
+Tillæg i alt:
+{" "}
+{(
+  salaryStats.eveningPay +
+  salaryStats.saturdayPay +
+  salaryStats.sundayPay +
+  salaryStats.overtimePay
+).toFixed(0)}
+kr
 
   <br />
 
@@ -510,15 +531,17 @@ kr
 
 Skat 44%:
 {" "}
-{salaryStats.estimatedTax.toFixed(0)}
+- {salaryStats.estimatedTax.toFixed(0)}
 kr
 
 <br />
 
-Forventet udbetalt:
-{" "}
-{salaryStats.netPay.toFixed(0)}
-kr
+<strong>
+  Forventet udbetalt:
+  {" "}
+  {salaryStats.netPay.toFixed(0)}
+  kr
+</strong>
 
   <strong>
     Samlet:
