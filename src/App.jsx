@@ -232,6 +232,9 @@ END:VEVENT
     S3: 0,
     S4: 0,
     S5: 0,
+    ekstra: 0,
+ferie: 0,
+syg: 0,
   };
 
   monthDays.forEach((date) => {
@@ -243,6 +246,9 @@ END:VEVENT
       if (s.type === "Dagvagt") result.dag++;
       if (s.type === "Aftenvagt") result.aften++;
       if (s.type === "Nattevagt") result.nat++;
+      if (s.type === "Ekstravagt") result.ekstra++;
+if (s.type === "Ferie") result.ferie++;
+if (s.type === "Syg") result.syg++;
 
       if (result[s.afdeling] !== undefined) {
         result[s.afdeling]++;
@@ -454,6 +460,13 @@ return {
   S4: {monthStats.S4}
   {" | "}
   S5: {monthStats.S5}
+  <br />
+
+Ekstravagter: {monthStats.ekstra}
+{" | "}
+Ferie: {monthStats.ferie}
+{" | "}
+Syg: {monthStats.syg}
 </div>
 <div
   style={{
